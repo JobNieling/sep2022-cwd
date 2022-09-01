@@ -19,8 +19,10 @@ app.use(express.static(path.join(__dirname, 'client-side')));
 var mongo    = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 
-mongo.connect('mongodb://127.0.0.1:27017/http_cats', function(err, db) {
+mongo.connect('mongodb://127.0.0.1:27017', function(err, client) {
   if(err) throw err;
+
+  let db = client.db('http_cats');
 
   var collection = db.collection('pictures');
 
@@ -80,7 +82,7 @@ mongo.connect('mongodb://127.0.0.1:27017/http_cats', function(err, db) {
 
   pictureRoutes.post('/', function(request, response) {
      request.body.created_at = new Date();
-     collection.insert(request.body, function(err, result) {
+     collection.insertOne(request.body, function(err, result) {
         if(err) throw err;
         response.json(request.body);
      });
